@@ -1,6 +1,6 @@
 services:
 
-  db:
+  database:
     image: postgres
     restart: always
     shm_size: 128mb
@@ -9,4 +9,19 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
     ports:
-      - 5432:5432
+      - ${DB_PORT}:5432
+    volumes:
+      - .postgres:/var/lib/postgresql/data
+
+  backend:
+    build:
+      .
+    depends_on:
+      - database
+    volumes:
+      - .:/myapp
+    ports:
+      - "8000:8000"
+    restart: always
+    env_file:
+      - .env

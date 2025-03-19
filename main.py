@@ -1,5 +1,6 @@
+import uvicorn
 from contextlib import asynccontextmanager
-
+from app.config import settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.books.views import router as book_router
@@ -16,17 +17,17 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-origins = [
-    "http://localhost",
-    "http://localhost:3000",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    # allow_origins=settings.HOST,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(book_router, prefix="/books")
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

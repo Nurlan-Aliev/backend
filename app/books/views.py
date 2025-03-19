@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import db_helper
 from app.books import schemas
 from app.books import crud
+from pydantic import AnyUrl
 
 
 router = APIRouter(tags=["Book"])
@@ -19,15 +20,17 @@ async def book_list(
     return result
 
 
-@router.post("/", response_class=RedirectResponse)
+@router.post("/")
 async def create_book(
-    request: Request,
     book: schemas.Book,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
+    book.img_url = AnyUrl(
+        # "https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149341898.jpg"
+        'https://sun9-54.userapi.com/impg/kzJsESyTsnBXGH4qF1n3db9tvWjWiDCeNOf7FA/eBKoqYGEflU.jpg?size=1439x2160&quality=95&sign=c6a1d23c60234d8cf1b1b80a02b39e4e&type=album'
+    )
     await crud.create_book(book, session)
-    redirect_url = request.url_for("book_list")
-    return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+    return "book was created"
 
 
 @router.patch("/{idx}")

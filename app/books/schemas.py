@@ -5,7 +5,7 @@ class Book(BaseModel):
     title: str
     author: str
     phrases: str
-    img_url: AnyUrl
+    img_url: AnyUrl | None = None
 
 
 class ReadBook(Book):
