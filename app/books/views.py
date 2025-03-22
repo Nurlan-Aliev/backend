@@ -17,6 +17,7 @@ async def book_list(
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> List[schemas.ReadBook]:
     result = await crud.get_books(session)
+    print(f'\n\n\n{result}\n\n\n')
     return result
 
 
